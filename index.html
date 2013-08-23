@@ -1,0 +1,302 @@
+<html>
+	<head>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" ></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+		<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+		<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+		<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+		<style type="text/css">
+			.ui-accordion-header {
+				outline:none;
+			}
+
+		</style>
+		<script>
+		
+		  $(function() {
+			
+			$('#myTab a').click(function (e) {
+			  e.preventDefault()
+			  $(this).tab('show')
+			  that = this;
+			  var a = $(that).attr("href").split("#")[1]
+			  $("#"+a).find(".accordion").accordion({
+					collapsible: true,
+			  		active: false
+				})
+			})
+		  });
+	</script>
+	</head>
+	<body>
+		<div class="container">
+
+		<div class="row">
+		<img src="flux7.png"><h2>MongoDB Labs</h2>
+
+		<hr/>
+		<ul class="nav nav-tabs" id="myTab">
+		  <li class="active"><a href="#basic">Basic</a></li>
+		  <li><a href="#find">Find/Update</a></li>
+		  <li><a href="#aggregation">Aggregation</a></li>
+		  <li><a href="#mapreduce">map-reduce</a></li>
+		</ul>
+		<div class="tab-content">
+		<div class="tab-pane active" id="basic">
+			<div class="accordion">
+				<p>list all databases</p>
+				<div>
+					<pre class="prettyprint">show dbs</pre>
+				</div>
+				<p>create database/collection "sales"</p>
+				<div>
+					<p>command "use sales" will create and switch to the new database</p>
+				</div>
+				<p>list all collections</p>
+				<div>
+					<pre class="prettyprint">show collections;</pre>
+				</div>
+			</div>
+		</div>
+		
+					<div class="tab-pane" id="mapreduce">
+						<div class="accordion">
+							<p>How many times each payment method has been used ?</p>
+							<div>
+								<pre class="prettyprint">
+		mapFunc = function(){ 
+			emit(this.payment_method,1)
+		}
+		reduceFunc= function(key,values){ 
+			Array.sum(values) 
+		}
+		db.orders.mapReduce(mapFunc,reduceFunc,{out:{inline:1}});
+
+								</pre>
+							</div>
+						</div>
+					</div>
+		
+		
+		<div class="tab-pane" id="find">
+		<div class="accordion">
+			<p>insert a document in "orders" collection with customer_id=123 , price = 100 , items=banana,strawberry,apple , payment_method=credit_card</p>
+			  <div>
+			    <p>
+				<pre class="prettyprint">
+db.orders.save({
+	customer_id: 123,
+	price: 100,
+	items: ['banana', 'strawberry', 'apple'],
+	payment_method:'credit_card'
+})
+				</pre>
+				</p>
+			  </div>
+
+			<p>insert a document in "orders" collection with customer_id=456 , price = 150 , items=peaches,banana,grapes , payment_method=debit_card</p>
+			  <div>
+			    <p>
+				<pre class="prettyprint">
+db.orders.save({
+	customer_id: 456,
+	price: 150,
+	items: ['peaches', 'banana', 'grapes'],
+	payment_method:'debit_card'
+})
+				</pre>
+				</p>
+			  </div>
+			
+			<p>find all documents in the "orders" collection</p>
+			<div>
+				<pre class="prettyprint">
+db.orders.find()					
+				</pre>
+			</div>
+			
+			<p>find all orders paid with credit_card</p>
+			<div>
+				<pre class="prettyprint">
+db.orders.find({payment_method:"credit_card"})					
+				</pre>
+			</div>
+			
+			<p>Show only prices for the orders paid with credit_card</p>
+			<div>
+				<pre class="prettyprint">
+					
+				</pre>
+			</div>
+			
+
+				<p>find all documents in the "orders" collection which have payment time specified as credit_card and price=100</p>
+				<div>
+					<pre class="prettyprint">
+db.orders.find({payment_method:"credit_card",price:100})					
+					</pre>
+				</div>
+				
+				<p>find all documents in the "orders" collection which have price > 100</p>
+				<div>
+					<pre class="prettyprint">
+db.orders.find({price:{$gt:100}})					
+					</pre>
+				</div>
+				
+				<p>find all documents in the "orders" collection which have price > 100 and less than 200</p>
+				<div>
+					<pre class="prettyprint">
+db.orders.find({price:{$gt:100,$lt:200}})					
+					</pre>
+				</div>
+				
+				<p>find all the orders who have purchased banana's'</p>
+				<div>
+					<pre class="prettyprint">
+db.orders.find({items:"banana"})					
+					</pre>
+				</div>
+				
+				<p>find all the orders who have purchased banana and apple's'</p>
+				<div>
+					<pre class="prettyprint">
+db.orders.find({items:"banana",items:"apple"})					
+					</pre>
+				</div>
+				
+				<p>find all the orders who have purchased banana and apple's'</p>
+				<div>
+					<pre class="prettyprint">
+db.orders.find({items:"banana",items:"apple"})					
+					</pre>
+				</div>
+				
+				<p>find all the orders who have purchased banana or apple's'</p>
+				<div>
+					<pre class="prettyprint">
+db.orders.find({"$or":[{items:"apple"},{items:"banana"}]})
+db.orders.find({"items":{"$in":["banana","apple"]}})
+					
+					</pre>
+				</div>
+				
+				
+				<p>update price to 90 where customer_id is 123</p>
+				<div>
+					<pre class="prettyprint">
+db.orders.update({"customer_id":123},{$set:{price:90}});
+					
+					</pre>
+				</div>
+				
+				<p>add 5 dollars discount to all orders who paid with debit cards</p>
+				<div>
+					<pre class="prettyprint">
+db.orders.update({payment_method:"debit_card"},{$set:{"discount":5}},{multi:true});
+					</pre>
+				</div>
+				
+					<p>We are at loss, remove discount from all orders</p>
+					<div>
+						<pre class="prettyprint">
+db.orders.update({payment_method:"debit_card"},{$unset:{"discount":1}},{multi:true});
+						</pre>
+					</div>
+			</div>		
+			</div>
+					
+			<div class="tab-pane" id="aggregation">
+			<div class="accordion">
+				<p>Use below method to populate dummy data in bulk</p>
+				<div>
+					<pre class="prettyprint">
+function(){ 
+	var items_arr = ["apple","banana","peaches","orange","grapes"];
+	var payments = ["credit_card","debit_card","cash","cheque"];
+	for(var i = 1 ; i <= 8 ; i ++ ) { 
+		j = i%5;
+		db.orders.insert({customer_id:i , price : i , payment_method:payments[i%4], items:[items_arr[j],items_arr[(j+1)%5]] })
+	} 
+}
+					</pre>					
+				</div>
+
+				<p>List sum of all payments for each payment type</p>
+				<div>
+					<pre class="prettyprint">
+db.orders.aggregate(
+		{$group:{
+				_id:"$payment_method",
+				sum:{$sum:"$price"}
+				}
+		});
+					</pre>
+				</div>
+			
+				<p>Sum all payments made with credit card</p>
+				<div>
+					<pre class="prettyprint">
+db.orders.aggregate(
+		{$match:{
+				payment_method:"credit_card"
+			}
+		},
+		{$group:{
+				_id:null,
+				sum:{ $sum:"$price" }
+			}
+		});
+					</pre>
+				</div>
+				
+				<p>Calculate total tax on all orders made with credit_card (10% tax)</p>
+				<div>
+					<pre class="prettyprint">
+db.orders.aggregate(
+		{$match:{payment_method:"credit_card"}},
+		{$project:{
+				tax:{$multiply:["$price",0.1]}
+			}
+		},
+		{$group:{_id:null,total_tax:{$sum:"$tax"}}
+	});
+					</pre>
+				</div>
+					
+				<p>How many times each item has been purchased ?</p>
+				<div>
+					<pre class="prettyprint">
+db.orders.aggregate(
+	{$unwind:"$items"},
+	{$group:{_id:"$items",count:{$sum:1}}
+})
+					</pre>
+				</div>
+				
+				<p>How many times peaches have been purchased with cash</p>
+				<div>
+					<pre class="prettyprint">
+db.orders.aggregate({$unwind:"$items"},{$match:{"payment_method":"cash","items":"peaches"}},{$group:{_id:"$items",count:{$sum:1}}})
+					</pre>
+				</div>
+				
+				<p>How many orders are there in total?</p>
+					<div>
+						<pre class="prettyprint">
+db.orders.count()
+						</pre>
+					</div>
+				<p>How many payment methods have been used?</p>
+					<div>
+						<pre class="prettyprint">
+db.orders.distinct("payment_method")
+						</pre>
+					</div>
+			</div>
+			</div>
+			</div>
+
+			</div>
+	</body>
+</html>
